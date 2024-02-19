@@ -14,10 +14,8 @@ import pandas as pd
 
 llm = OpenAI(
     temperature = 0.9,
-    base_url="https://oneapi.xty.app/v1",
-    api_key="sk-Y6Cm1t6j5chqu6ypC2C7799792Db48AbA3037c87Bb701c02",
+    api_key="xxx",
     http_client=httpx.Client(
-        base_url="https://oneapi.xty.app/v1",
         follow_redirects=True,
     ),
 )
