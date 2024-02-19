@@ -119,3 +119,36 @@ chain = load_summarize_chain(llm = llm,chain_type = 'map_reduce')
 
 output_news = chain.invoke(docs)
 print(output_news)
+
+# 转换输出内容的类型并单独提取输出的text
+
+output_news = str(output_news)
+# print(type(output_news))
+
+output_news_1 = output_news.split(" 'output_text': ")[len(output_news.split(" 'output_text': "))-1]
+# print(output_news_1)
+
+# 构建新闻分析的prompt
+
+template = """
+%INSTRUCTIONS:
+You are a financial analyst, please analyze the impact of the content after 'output_text' on the stock market
+Don't talk about Sina
+
+
+%TEXT:
+{text}
+"""
+
+prompt = PromptTemplate(
+    input_variables = ["text"],
+    template = template
+)
+
+confusing_text = output_news_1
+final_prompt = prompt.format(text = confusing_text)
+
+# 调用openai进行分析并输出
+
+output_news_2 = llm.invoke(final_prompt)
+# print(output_news_2)
