@@ -1,0 +1,55 @@
+# 获取新闻
+def get_news(company_name): 
+    # 设置用户代理列表
+    agent_list = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_4_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPad; CPU OS 14_4_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (Linux; Android 11; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 Mobile Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edge/44.18363.8131',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15',
+        ]
+
+    # 随机选择一个用户代理字符串
+    random_agent = random.choice(agent_list)
+    # 构建请求头部，包含随机选择的用户代理字符串
+    headers = {
+        'User-Agent': random_agent
+    }
+
+    # 使用google_query函数构建谷歌搜索的URL
+    g_query = baidu_query(company_name) 
+    # 发送HTTP GET请求，获取响应文本
+    res = requests.get(g_query, headers=headers).text 
+    # 使用BeautifulSoup解析HTML文档
+    soup = BeautifulSoup(res, "html.parser") 
+    news = [] 
+    # 抓取所有类名为 "n0jPhd ynAwRc tNxQIb nDgy9d" 的 div 元素，通常包含新闻标题和描述
+    for n in soup.find_all("div", class_="n0jPhd ynAwRc tNxQIb nDgy9d"): 
+        news.append(n.text) 
+    # 抓取所有类名为 "IJl0Z" 的 div 元素，通常包含新闻标题和描述
+    for n in soup.find_all("div", class_="IJl0Z"): 
+        news.append(n.text) 
+
+    # 如果新闻数量超过6条，则只保留前6条
+    if len(news) > 6:
+        news = news[:6]  # 修改变量名为 news
+
+    news_string = "" 
+    # 将新闻转换为字符串格式，并按顺序加上序号
+    for i, n in enumerate(news): 
+        news_string += f"{i}. {n}\n"
+    # 构造最终的新闻字符串
+    news = "Recent News:\n\n" + news_string 
+
+    return news 
